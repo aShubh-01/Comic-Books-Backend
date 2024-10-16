@@ -56,9 +56,9 @@ To set up the project locally, follow these steps:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/yourusername/comic-book-store-backend.git
-   cd comic-book-store-backend
-2. **Install Dependencies**
+   git clone https://github.com/aShubh-01/Comic-Books-Backend.git
+   cd Comic-Books-Backend
+2. **Install Dependencies*
    - npm install
 3. **Setup environment**
    - Create an .env file and specify your postgreSQL database url as DATABASE_URL="your_url"
