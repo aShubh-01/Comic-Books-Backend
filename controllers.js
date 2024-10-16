@@ -1,4 +1,4 @@
-const { prisma } = require('./config.js')
+const { prisma, redisClient } = require('./config.js')
 const { createBookDataSchema, updateBookDataSchema } = require('./validationSchemas.js')
 
 const createBook = async (req, res) => {                   // Create comic book Endpoint
@@ -107,7 +107,7 @@ const deleteBook = async (req, res) => {                   // Delete comic book 
     })
 }
 
-const getBook = async (req, res) => {                            // Get details of an book Endpoint
+const getBook = async (req, res) => {                      // Get details of an book Endpoint
 
     const comicBookId = parseInt(req.params.id);
 
@@ -139,29 +139,40 @@ const getBook = async (req, res) => {                            // Get details 
     })
 }
 
-const getBooksList = async (req, res) => {
-    const { author, year : minYear, price : maxPrice, pages : maxPages, discount : minDiscount, isUsed : isBookUsed, sortBy,  page, limit }= req.query; // get query parameters
-    
-    let filters = [                                                     // build an filter array for 
+const getBooksList = async (req, res) => {                  //Get an list of filtered and sorted books
+
+    const { author, year : maxYear, price : maxPrice, pages : maxPages, discount : maxDiscount, isUsed : isBookUsed, sortBy,  page, limit }= req.query; // get query parameters
+
+    const key = JSON.stringify(req.query);
+
+    const cachedData = await redisClient.get(key);              // check for cached data in redis
+    if(cachedData) {
+        return res.status(200).json({                           // return the cached data in response
+            message: "Books fetched!",
+            booksList: JSON.parse(cachedData)
+        })
+    }
+
+    let filters = [                                                     // build an filter for fetching the books that satisfy the filtering criteria 
         author ? { authorName: author } : {},
-        minYear ? { publishedYear: { gte: parseInt(minYear) } } : {},
+        maxYear ? { publishedYear: { lte: parseInt(maxYear) } } : {},
         maxPrice ? { price: { lte: parseInt(maxPrice) } } : {},
         maxPages ? { pages: { lte: parseInt(maxPages) } } : {},
-        minDiscount ? { discount: { gte: parseInt(minDiscount) } } : {},
-        isBookUsed ? { isUsed: isBookUsed } : {}
+        maxDiscount ? { discount: { lte: parseInt(maxDiscount) } } : {},
+        isBookUsed ? { isUsed: (isBookUsed == 'true' ? true : false) } : {}
     ]
 
-    const skip = (parseInt(page) - 1) * limit;
+    const skip = (parseInt(page) - 1) * limit;                          // calculate the offset for skipping records
 
     try {
-        let booksList = await prisma.comicBook.findMany({
+        let booksList = await prisma.comicBook.findMany({               // fetch the required books from the database by applysing offset, limit and filters
             where : filters.length > 0 ? { AND : filters } : {},
             skip: skip,
             take: parseInt(limit)
         })
 
-        switch (sortBy) {
-            case 'price': booksList = booksList.sort((a, b) => b.price - a.price)
+            switch (sortBy) {                                             // sort the fetched comic books based on sorting metric (eg price, pages, discount, year, etc)
+            case 'price': booksList = booksList.sort((a, b) => a.price - b.price)
             break;
             case 'discount': booksList = booksList.sort((a, b) => b.discount - a.discount)
             break;
@@ -171,17 +182,21 @@ const getBooksList = async (req, res) => {
             break;
             case 'alphabets': booksList = booksList.sort((a, b) => a.bookName.localeCompare(b.bookName))
             break;
+            default : booksList = booksList.sort((a, b) => a.id - b.id)
+            break;
         }
 
-        return res.status(200).json({
+        await redisClient.setEx(key, 60, JSON.stringify(booksList));        // cache the data for 1 min with the stringified query parameters as the key
+
+        return res.status(200).json({                                       // return the sorted books in response
             message: "Books fetched!",
             booksList
         })
-    } catch (err) {
+    } catch (err) {                                             // catch any errors that might occur during fetching, sorting or caching of books
         console.log('Unable to fetch books list', err)
     }
     
-    return res.status(500).json({
+    return res.status(500).json({                       // return if endpoint fails to return comic books
         message: "Unable to fetch books list"
     })
 }

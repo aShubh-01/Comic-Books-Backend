@@ -1,0 +1,93 @@
+{
+	"info": {
+		"_postman_id": "2c42d957-1538-4139-b1fd-ef12c80a88b0",
+		"name": "Comic Book Backend APIs",
+		"description": "An collection of api endpoints for testing the comic book store backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34448969"
+	},
+	"item": [
+		{
+			"name": "Create Comic Book - POST",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"bookName\": \"Pride and Prejudice\",\n    \"authorName\": \"Jane Austen\",\n    \"description\": \"\",\n    \"price\": 280,\n    \"isUsed\": true,\n    \"discount\": 10.00,\n    \"publishedYear\": 1813,\n    \"pages\": 432\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"create"
+					]
+				},
+				"description": "Create a comic book"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Comic Book - PUT",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"description": "Update an comic book by passing its id in query parameter and the updated data in body"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Comic Book - DELETE",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"description": "Delete an comic book by passing its id in query parameter"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Book Details - GET",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"description": "get an comic book's details by passing its id in query parameters"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Books List - GET",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/list?filters=author=abc% price=100%year=2000%discount=50%isUsed=false%pages=100?sortBy=price",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"list"
+					],
+					"query": [
+						{
+							"key": "filters",
+							"value": "author=abc% price=100%year=2000%discount=50%isUsed=false%pages=100?sortBy=price"
+						}
+					]
+				},
+				"description": "Get an list of books that satisfies certain filter specified in the query params and offset limits, it can also be sorted by the metric specified."
+			},
+			"response": []
+		}
+	]
+}
