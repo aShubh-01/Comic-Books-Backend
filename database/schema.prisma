@@ -16,8 +16,9 @@ datasource db {
 model ComicBook {
   id Int @id @default(autoincrement())
   bookName String
-  authorNme String
-  description String
+  authorName String
+  description String?
+  PublishedYear Int
   price Int
   discount Decimal? @db.Decimal(5, 2) @default("0.00")
   isUsed Boolean @default(false)
