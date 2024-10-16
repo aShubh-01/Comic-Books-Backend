@@ -18,8 +18,9 @@ model ComicBook {
   bookName String
   authorName String
   description String?
-  PublishedYear Int
+  publishedYear Int
   price Int
+  pages Int? 
   discount Decimal? @db.Decimal(5, 2) @default("0.00")
   isUsed Boolean @default(false)
 }

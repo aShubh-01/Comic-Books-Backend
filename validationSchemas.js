@@ -5,6 +5,7 @@ const createBookDataSchema = zod.object({
     authorName: zod.string({message: 'Author Name must be an string'}),
     description: zod.string({ message: 'Description must be an string'}).optional(),
     price: zod.number({ message: 'Price must be an number' }),
+    pages: zod.number({ message: 'Pages must be an number'}).min(1, { message: 'There must be atleast 1 page in an book'}).optional(),
     publishedYear: zod.number({ message: 'Published Year must be an number '}),
     discount: zod.number({ message: 'Discount must be an number'}).max(100, { message: 'Discount cannot be more than 100%'}).optional(),
     isUsed: zod.boolean({ message: 'isUsed must be true or false' })

@@ -4,8 +4,8 @@
   "description": "Backend of the comic book app",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "build": "npm install && cd database && npx prisma generate",
+    "dev": "cd database && npx prisma generate && cd .. && nodemon index.js",
+    "build": "npm install && cd database && npx prisma migrate dev --name Bootstrap Database",
     "start": "node index.js"
   },
   "dependencies": {

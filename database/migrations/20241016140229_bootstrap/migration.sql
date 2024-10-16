@@ -4,8 +4,9 @@ CREATE TABLE "ComicBook" (
     "bookName" TEXT NOT NULL,
     "authorName" TEXT NOT NULL,
     "description" TEXT,
-    "PublishedYear" INTEGER NOT NULL,
+    "publishedYear" INTEGER NOT NULL,
     "price" INTEGER NOT NULL,
+    "pages" INTEGER,
     "discount" DECIMAL(5,2) DEFAULT 0.00,
     "isUsed" BOOLEAN NOT NULL DEFAULT false,
 
