@@ -1,6 +1,6 @@
 # Comic Book Store Backend
 
-**Internship Assignment by Mango Jelly**
+**Internship Assignment by The Mango Jelly**
 
 ## Overview
 
